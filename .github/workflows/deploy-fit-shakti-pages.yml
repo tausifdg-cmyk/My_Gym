@@ -1,0 +1,37 @@
+name: Deploy Fit Shakti to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'fit-shakti/**'
+      - '.github/workflows/deploy-fit-shakti-pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: fit-shakti-pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Upload Fit Shakti
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './fit-shakti'
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
